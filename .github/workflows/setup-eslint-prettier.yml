@@ -29,8 +29,35 @@ jobs:
       - name: Install Prettier globally
         run: npm install prettier@3.0.0 -g
 
-      - name: Initialize ESLint
-        run: npx eslint --init
+      - name: Create ESLint configuration file
+        run: |
+          echo '{
+          "env": {
+            "browser": true,
+            "es2021": true
+          },
+          "extends": [
+            "eslint:recommended",
+            "plugin:react/recommended",
+            "prettier"
+          ],
+          "parserOptions": {
+            "ecmaFeatures": {
+              "jsx": true
+            },
+            "ecmaVersion": 12,
+            "sourceType": "module"
+          },
+          "plugins": [
+            "react",
+            "prettier"
+          ],
+          "rules": {
+            "prettier/prettier": "error",
+            "semi": ["error", "never"],
+            "quotes": ["error", "single"]
+          }
+          }' > .eslintrc.json
 
       - name: Create Prettier configuration file
         run: |
