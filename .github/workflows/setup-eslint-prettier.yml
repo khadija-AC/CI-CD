@@ -122,6 +122,9 @@ jobs:
 
       - name: Add major release script to package.json
         run: jq '.scripts["release:major"] = "standard-version --release-as major"' package.json > temp.json && mv temp.json package.json
-
+ 
+      - name: Identification
+        run : git config --global user.name "khadija-AC"
+        
       - name: Run initial release
         run: npm run release -- --first-release
