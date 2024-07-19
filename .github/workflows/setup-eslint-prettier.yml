@@ -53,7 +53,8 @@ jobs:
         run: npm install lint-staged -g
 
       - name: Update package.json with lint-staged configuration
-        run: jq '. + { "lint-staged": { "**/*.js": "npx eslint . --fix" } }' package.json > temp.json && mv temp.json package.json
+        run: |
+          jq '. + { "lint-staged": { "**/*.js": "npx eslint . --fix" } }' package.json > temp.json && mv temp.json package.json
 
       - name: Initialize Husky and install dependencies
         run: npx husky-init && npm install
