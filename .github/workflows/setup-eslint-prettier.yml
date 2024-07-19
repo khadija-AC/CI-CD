@@ -106,7 +106,7 @@ jobs:
         run: npx husky add .husky/prepare-commit-msg "exec < /dev/tty && node_modules/.bin/cz --hook || true"
 
       - name: Add Commitizen script to package.json
-        run: npm pkg set scripts.cz="cz"
+        run: jq '.scripts["cz"] = "cz"' package.json > temp.json && mv temp.json package.json
 
       - name: Install Standard Version globally
         run: npm install --save-dev standard-version -g
