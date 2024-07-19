@@ -112,7 +112,7 @@ jobs:
         run: npm install --save-dev standard-version -g
 
       - name: Add Standard Version script to package.json
-        run: npm pkg set scripts.release="standard-version"
+        run: jq '.scripts["release"] = "standard-version "' package.json > temp.json && mv temp.json package.json
 
       - name: Add minor release script to package.json
         run: jq '.scripts["release:minor"] = "standard-version --release-as minor"' package.json > temp.json && mv temp.json package.json
