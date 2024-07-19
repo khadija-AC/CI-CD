@@ -1,0 +1,61 @@
+name: Setup ESLint and Prettier
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Initialize npm
+        run: npm init -y
+
+      - name: Install ESLint globally
+        run: npm install eslint@6.8.0 -g
+
+      - name: Install Prettier globally
+        run: npm install prettier@3.0.0 -g
+
+      - name: Initialize ESLint
+        run: npx eslint --init
+
+      - name: Create Prettier configuration file
+        run: echo '{
+          "semi": false,
+          "tabWidth": 2,
+          "singleQuote": true
+        }' > .prettierrc
+
+      - name: Install ESLint and Prettier plugins
+        run: npm install --save-dev eslint-config-prettier eslint-plugin-prettier
+
+      - name: Update ESLint configuration with Prettier settings
+        run: jq '.extends += ["prettier"] | .plugins = ["prettier"] | .rules["prettier/prettier"] = "error"' .eslintrc.json > temp.json && mv temp.json .eslintrc.json
+
+      - name: Install Husky globally
+        run: npm install husky -g
+
+      - name: Install lint-staged globally
+        run: npm install lint-staged -g
+
+      - name: Update package.json with lint-staged configuration
+        run: jq '. + { "lint-staged": { "**/*.js": "npx eslint . --fix" } }' package.json > temp.json && mv temp.json package.json
+
+      - name: Initialize Husky and install dependencies
+        run: npx husky-init && npm install
+
+      - name: Add pre-commit hook with lint-staged
+        run: npx husky add .husky/pre-commit "npx lint-staged"
